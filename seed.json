@@ -1,0 +1,31 @@
+{
+  "usuarios": [
+    {
+      "nome": "Idelmar Junior",
+      "email": "idelmar@exemplo.com",
+      "senha": "test1234"
+    },
+    {
+      "nome": "Pedrix Cortez",
+      "email": "pedrixcortez@exemplo.com",
+      "senha": "test2345"
+    }
+  ],
+  "livros": [
+    {
+      "titulo": "Dom Casmurro",
+      "autor": "Machado de Assis",
+      "ano": 1899
+    },
+    {
+      "titulo": "O Pequeno Príncipe",
+      "autor": "Antoine de Saint-Exupéry",
+      "ano": 1943
+    },
+    {
+      "titulo": "Capitães da Areia",
+      "autor": "Jorge Amado",
+      "ano": 1937
+    }
+  ]
+}
