@@ -19,14 +19,44 @@ app.use(
   })
 );
 
+//Middleware para verificar se o usuário está logado
+function autenticar(req, res, next) {
+  if (!req.session.usuario) {
+    return res.status(401).json({ erro: "Acesso negado. Faça login." });
+  }
+  next();
+}
+
+//Middleware para verificar se o usuário é administrador
+function admin(req, res, next) {
+  if (!req.session.usuario || !req.session.usuario.is_admin) {
+    return res.status(403).json({ erro: "Acesso restrito ao administrador." });
+  }
+  next();
+}
+
+// Rota protegida para usuários logados
+app.get("/livros", autenticar, async (req, res) => {
+  const livros = await livroDao.listar();
+  res.json(livros);
+});
+
+// Rota protegida para administradores
+app.post("/livros", admin, async (req, res) => {
+  const { titulo, autor, ano } = req.body;
+  const livros = new livro(null, titulo, autor, ano);
+  const id = await livroDao.inserir(livros);
+  res.json({ id });
+});
+
 app.post("/registrar", async (req, res) => {
-  const usuario = new usuario(
+  const usuarios = new usuario(
     null,
     req.body.nome,
     req.body.email,
     req.body.senha
   );
-  const id = await usuarioDao.registrar(usuario);
+  const id = await usuarioDao.registrar(usuarios);
   req.session.usuarioId = id;
   res.sendStatus(201);
 });
@@ -47,8 +77,8 @@ app.get("/logout", (req, res) => {
 });
 
 app.post("/livros", async (req, res) => {
-  const livro = new livro(null, req.body.titulo, req.body.autor, req.body.ano);
-  const id = await livroDao.inserir(livro);
+  const livros = new livro(null, req.body.titulo, req.body.autor, req.body.ano);
+  const id = await livroDao.inserir(livros);
   res.status(201).send({ id });
 });
 
@@ -76,10 +106,10 @@ app.get("/historico", async (req, res) => {
 
 app.get("/admin/reservas", async (req, res) => {
   if (!req.session.usuarioId) return res.status(401).send("Não autenticado");
-  const usuario = await UsuarioDAO.buscarPorId(req.session.usuarioId);
+  const usuario = await usuarioDao.buscarPorId(req.session.usuarioId);
   if (!usuario.is_admin) return res.status(403).send("Acesso negado");
 
-  const reservas = await ReservaDAO.listarTodas();
+  const reservas = await ReservaDAO.listarTodas(); // criar
   res.json(reservas);
 });
 
