@@ -52,14 +52,16 @@ Este é um sistema web desenvolvido com **Node.js** e **PostgreSQL** para gerenc
 
 ## 🧑‍💻 Contribuidores
 
-| Nome            | Contato                            |
+| Name            | Contact                            |
 |------------------|-------------------------------------|
 | Idelmar Junior   | idelmarjuniorre@gmail.com           |
 | GitHub           | [IdelmarJr-dev](https://github.com/IdelmarJr-dev) |
-| Pedro Lucas      | pedrixlord@gmail.com
+
+| Name             | Contact
+|------------------|-------------------------------------|
+| Pedro Lucas      | pedrixlord@gmail.com                |
 | GitHub           | [PedroLucasCortez](https://github.com/PedroLucasCortez)
 
 ## 📜 Licença
 
-Este projeto está licenciado sob **MIT License**.  
-<sub>*Você pode usar, modificar e distribuir com atribuição.*</sub>
+This project is licensed under All Rights Reserved.
