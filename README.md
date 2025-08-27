@@ -1,4 +1,4 @@
-# 📚 Biblioteca IFPI – Sistema de Empréstimos e Multas
+# 📚 Biblioteca – Sistema de Empréstimos e Multas
 
 ## 🎯 Sobre o Projeto
 
