@@ -7,6 +7,8 @@ const usuario = require("./models/usuario");
 const livroDao = require("./dao/livroDao");
 const usuarioDao = require("./dao/usuarioDao");
 const emprestimoDao = require("./dao/emprestimoDao");
+const reservaDao = require("./dao/reservaDao");
+const Reserva = require("./models/reserva");
 
 const app = express();
 app.use(bodyParser.json());
@@ -76,6 +78,45 @@ app.get("/logout", (req, res) => {
   res.sendStatus(200);
 });
 
+//Listar todas as reservas (admin)
+app.get("/reservas", admin, async (req, res) => {
+  try {
+    const reservas = await reservaDao.listarTodos();
+    res.json(reservas);
+  } catch (err) {
+    res.status(500).json({ erro: "Erro ao listar reservas" });
+  }
+});
+
+//Criar nova reserva (usuário logado)
+app.post("/reservas", autenticar, async (req, res) => {
+  try {
+    const { livro_id } = req.body;
+    const reserva = new Reserva(
+      null,
+      livro_id,
+      req.session.usuario.id,
+      new Date(),
+      false
+    );
+    const id = await reservaDao.criar(reserva);
+    res.json({ id });
+  } catch (err) {
+    res.status(500).json({ erro: "Erro ao criar reserva" });
+  }
+});
+
+//Atender reserva (admin)
+app.put("/reservas/:id/atender", admin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await reservaDao.atender(id);
+    res.json({ sucesso: true });
+  } catch (err) {
+    res.status(500).json({ erro: "Erro ao atender reserva" });
+  }
+});
+
 app.post("/livros", async (req, res) => {
   const livros = new livro(null, req.body.titulo, req.body.autor, req.body.ano);
   const id = await livroDao.inserir(livros);
@@ -101,7 +142,7 @@ app.put("/livros/:id/devolver", async (req, res) => {
 app.get("/historico", async (req, res) => {
   if (!req.session.usuarioId) return res.status(401).send("Não autenticado");
   const historico = await emprestimoDao.listarPorUsuario(req.session.usuarioId);
-  res.json;
+  res.json(historico);
 });
 
 app.get("/admin/reservas", async (req, res) => {
@@ -109,7 +150,7 @@ app.get("/admin/reservas", async (req, res) => {
   const usuario = await usuarioDao.buscarPorId(req.session.usuarioId);
   if (!usuario.is_admin) return res.status(403).send("Acesso negado");
 
-  const reservas = await ReservaDAO.listarTodas(); // criar
+  const reservas = await reservaDao.listarTodos();
   res.json(reservas);
 });
 
