@@ -2,7 +2,7 @@
 
 ## 🎯 Sobre o Projeto
 
-Este é um sistema web desenvolvido com **Node.js** e **PostgreSQL** para gerenciar a biblioteca do campus IFPI Picos. O projeto permite o controle completo de usuários, livros, empréstimos, devoluções, multas por atraso e reservas. Também inclui um painel administrativo para bibliotecários.
+Este é um sistema web desenvolvido com **Node.js** e **PostgreSQL** para gerenciar biblioteca. O projeto permite o controle completo de usuários, livros, empréstimos, devoluções, multas por atraso e reservas. Também inclui um painel administrativo para bibliotecários.
 
 ## 📦 Estrutura do Projeto
 
