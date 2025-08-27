@@ -1,4 +1,4 @@
-const pool = require("../datebase/conexao");
+const pool = require("../database/conexao");
 const emprestimo = require("../models/emprestimo");
 
 class emprestimoDao {

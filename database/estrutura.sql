@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS livros (
   id SERIAL PRIMARY KEY,
   titulo TEXT NOT NULL,
   autor TEXT NOT NULL,
-  ano_de_publicacao INTEGER,
+  ano INTEGER,
   disponivel BOOLEAN DEFAULT TRUE
 );
 
