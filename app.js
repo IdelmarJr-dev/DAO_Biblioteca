@@ -38,6 +38,10 @@ function admin(req, res, next) {
   next();
 }
 
+app.listen(process.env.PORT || 3000, "0.0.0.0", () => {
+  console.log("Servidor rodando no Railway");
+});
+
 // Rota protegida para usuários logados
 app.get("/livros", autenticar, async (req, res) => {
   const livros = await livroDao.listar();
