@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const session = require("express-session");
@@ -15,7 +16,7 @@ app.use(bodyParser.json());
 app.use(express.static("public"));
 app.use(
   session({
-    secret: "biblioteca-secreta",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
   })
@@ -171,4 +172,21 @@ app.post("/reservar/:livro_id", async (req, res) => {
     [req.params.livro_id, req.session.usuarioId, hoje]
   );
   res.sendStatus(201);
+});
+
+app.get("/status", (req, res) => {
+  res.json({
+    status: "online",
+    projeto: "Sistema de Biblioteca",
+    autor: "Idelmar Junior",
+    hora: new Date().toLocaleString("pt-BR", { timeZone: "America/Fortaleza" }),
+  });
+});
+app.get("/", (req, res) => {
+  res.send(`
+    <h1>Bem-vindo ao Sistema de Biblioteca IFPI</h1>
+    <p>Este é o backend do projeto desenvolvido por <strong>Idelmar Junior e Pedro Lucas</strong>.</p>
+    <p>Use as rotas como <code>/livros</code>, <code>/reservas</code>, <code>/login</code> para interagir com a API.</p>
+    <p>Status do sistema: <a href="/status">/status</a></p>
+  `);
 });
