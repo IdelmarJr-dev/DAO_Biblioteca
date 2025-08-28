@@ -7,7 +7,7 @@ const livro = require("../models/livro");
 
 (async () => {
   try {
-    console.log("🔐 Registrando usuários...");
+    console.log("Registrando usuários...");
     const admin = new usuario(
       null,
       "Bibliotecário",
