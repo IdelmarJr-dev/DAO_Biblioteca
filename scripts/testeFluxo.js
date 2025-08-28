@@ -23,7 +23,7 @@ const livro = require("../models/livro");
 
     const adminId = await usuarioDao.registrar({ ...admin, is_admin: true });
     const leitorId = await usuarioDao.registrar(leitor);
-    console.log(`✅ Admin ID: ${adminId}, Leitor ID: ${leitorId}`);
+    console.log(`Admin ID: ${adminId}, Leitor ID: ${leitorId}`);
 
     try {
       const duplicado = new Usuario(
@@ -37,10 +37,10 @@ const livro = require("../models/livro");
         `⚠️ Usuário duplicado registrado com ID ${id2} (isso não deveria acontecer!)`
       );
     } catch (err) {
-      console.error(`❌ Erro esperado: ${err.message}`);
+      console.error(`Erro esperado: ${err.message}`);
     }
 
-    console.log("\n📚 Cadastrando livros...");
+    console.log("\nCadastrando livros...");
     const livro1 = new livro(null, "1984", "George Orwell", 1949);
     const livro2 = new livro(
       null,
@@ -50,42 +50,42 @@ const livro = require("../models/livro");
     );
     const livroId1 = await livroDao.inserir(livro1);
     const livroId2 = await livroDao.inserir(livro2);
-    console.log(`✅ Livros cadastrados: ${livroId1}, ${livroId2}`);
+    console.log(`Livros cadastrados: ${livroId1}, ${livroId2}`);
 
-    console.log("\n📖 Alugando livro...");
+    console.log("\nAlugando livro...");
     await emprestimoDao.registrarEmprestimo(livroId1, leitorId);
-    console.log(`✅ Livro ${livroId1} alugado por usuário ${leitorId}`);
+    console.log(`Livro ${livroId1} alugado por usuário ${leitorId}`);
 
-    console.log("\n⏱️ Simulando atraso...");
+    console.log("\nSimulando atraso...");
     await pool.query(
       `UPDATE emprestimos SET data_emprestimo = CURRENT_DATE - INTERVAL '10 days' WHERE livro_id = $1`,
       [livroId1]
     );
 
     const multa = await emprestimoDao.calcularMulta(livroId1);
-    console.log(`💰 Multa calculada: R$${multa}`);
+    console.log(`Multa calculada: R$${multa}`);
 
-    console.log("\n📦 Registrando multa manual...");
+    console.log("\nRegistrando multa manual...");
     await pool.query(
       `INSERT INTO multas (usuario_id, valor, descricao, data_registro) VALUES ($1, $2, $3, CURRENT_DATE)`,
       [leitorId, multa, "Atraso na devolução do livro"]
     );
-    console.log("✅ Multa registrada");
+    console.log("Multa registrada");
 
-    console.log("\n📌 Criando reserva para livro indisponível...");
+    console.log("\nCriando reserva para livro indisponível...");
     await pool.query(
       `INSERT INTO reservas (livro_id, usuario_id, data_reserva) VALUES ($1, $2, CURRENT_DATE)`,
       [livroId1, leitorId]
     );
-    console.log("✅ Reserva criada");
+    console.log("Reserva criada");
 
-    console.log("\n📗 Devolvendo livro...");
+    console.log("\nDevolvendo livro...");
     await emprestimoDao.registrarDevolucao(livroId1);
-    console.log(`✅ Livro ${livroId1} devolvido`);
+    console.log(`Livro ${livroId1} devolvido`);
 
-    console.log("\n🎉 Testes concluídos com sucesso!");
+    console.log("\nTestes concluídos com sucesso!");
   } catch (err) {
-    console.error("❌ Erro durante os testes:", err);
+    console.error("Erro durante os testes:", err);
   } finally {
     pool.end();
   }
