@@ -22,6 +22,7 @@ app.use(
   })
 );
 
+app.listen(process.env.PORT || 3000, "0.0.0.0");
 //Middleware para verificar se o usuário está logado
 function autenticar(req, res, next) {
   if (!req.session.usuario) {
