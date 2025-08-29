@@ -23,33 +23,17 @@ app.use(
 );
 
 app.listen(process.env.PORT || 3000, "0.0.0.0", () => {
-  console.log("Servidor rodando no Railway");
+  console.log("Rodando...");
 });
 
-//Middleware para verificar se o usuário está logado
-function autenticar(req, res, next) {
-  if (!req.session.usuario) {
-    return res.status(401).json({ erro: "Acesso negado. Faça login." });
-  }
-  next();
-}
-
-//Middleware para verificar se o usuário é administrador
-function admin(req, res, next) {
-  if (!req.session.usuario || !req.session.usuario.is_admin) {
-    return res.status(403).json({ erro: "Acesso restrito ao administrador." });
-  }
-  next();
-}
-
 // Rota protegida para usuários logados
-app.get("/livros", autenticar, async (req, res) => {
+app.get("/livros", async (req, res) => {
   const livros = await livroDao.listar();
   res.json(livros);
 });
 
 // Rota protegida para administradores
-app.post("/livros", admin, async (req, res) => {
+app.post("/livros", async (req, res) => {
   const { titulo, autor, ano } = req.body;
   const livros = new livro(null, titulo, autor, ano);
   const id = await livroDao.inserir(livros);
@@ -58,7 +42,7 @@ app.post("/livros", admin, async (req, res) => {
 
 app.post("/registrar", async (req, res) => {
   const usuarios = new usuario(
-    null,
+    req.body.is_admin,
     req.body.nome,
     req.body.email,
     req.body.senha
@@ -84,7 +68,7 @@ app.get("/logout", (req, res) => {
 });
 
 //Listar todas as reservas (admin)
-app.get("/reservas", admin, async (req, res) => {
+app.get("/reservas", async (req, res) => {
   try {
     const reservas = await reservaDao.listarTodos();
     res.json(reservas);
@@ -94,7 +78,7 @@ app.get("/reservas", admin, async (req, res) => {
 });
 
 //Criar nova reserva (usuário logado)
-app.post("/reservas", autenticar, async (req, res) => {
+app.post("/reservas", async (req, res) => {
   try {
     const { livro_id } = req.body;
     const reserva = new Reserva(
@@ -112,7 +96,7 @@ app.post("/reservas", autenticar, async (req, res) => {
 });
 
 //Atender reserva (admin)
-app.put("/reservas/:id/atender", admin, async (req, res) => {
+app.put("/reservas/:id/atender", async (req, res) => {
   try {
     const { id } = req.params;
     await reservaDao.atender(id);

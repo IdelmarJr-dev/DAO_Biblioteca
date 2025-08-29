@@ -4,7 +4,6 @@ const bcrypt = require("bcrypt");
 
 class usuarioDao {
   static async registrar(usuario) {
-    // 🔍 Validação básica
     if (!usuario.nome || !usuario.email || !usuario.senha) {
       throw new Error("Dados incompletos para registro de usuário");
     }
@@ -21,6 +20,7 @@ class usuarioDao {
       `INSERT INTO usuarios (nome, email, senha, is_admin) VALUES ($1, $2, $3, $4) RETURNING id`,
       [usuario.nome, usuario.email, hash, usuario.is_admin || false]
     );
+    console.log(res);
 
     return res.rows[0].id;
   }
@@ -33,14 +33,15 @@ class usuarioDao {
 
     const usuario = res.rows[0];
     const valido = await bcrypt.compare(senha, usuario.senha);
+
     return valido
-      ? new usuario(
-          usuario.id,
-          usuario.nome,
-          usuario.email,
-          usuario.senha,
-          usuario.is_admin
-        )
+      ? {
+          id: usuario.id,
+          nome: usuario.nome,
+          email: usuario.email,
+          senha: usuario.senha,
+          is_admin: usuario.is_admin,
+        }
       : null;
   }
 
