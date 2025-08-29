@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 app.use(express.static("public"));
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.DATABASE_URL,
     resave: false,
     saveUninitialized: false,
   })
@@ -37,10 +37,6 @@ function admin(req, res, next) {
   }
   next();
 }
-
-app.listen(process.env.PORT || 3000, "0.0.0.0", () => {
-  console.log("Servidor rodando no Railway");
-});
 
 // Rota protegida para usuários logados
 app.get("/livros", autenticar, async (req, res) => {
