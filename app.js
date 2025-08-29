@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 app.use(express.static("public"));
 app.use(
   session({
-    secret: process.env.DATABASE_URL,
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
   })
