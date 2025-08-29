@@ -50,6 +50,20 @@ Este é um sistema web desenvolvido com **Node.js** e **PostgreSQL** para gerenc
 
 <sub>*Este projeto roda localmente via Node.js. Em breve será disponibilizado online.*</sub>
 
+## Como rodar
+Baixe o projeto
+```bash
+  git clone https://github.com/IdelmarJr-dev/DAO_Biblioteca.git
+```
+instale as depencias
+```bash
+  npm install
+```
+roda o projeto
+```bash
+  npm run dev
+```
+Tudo vai estar rodando na porta 8000
 ## 🧑‍💻 Contribuidores
 
 | Name            | Contact                            |
