@@ -1,5 +1,5 @@
-const { Client } = require("pg");
-const fs = require("fs");
+import { Client } from "pg";
+import { readFileSync } from "fs";
 
 const rootConfig = {
   user: "postgres",
@@ -10,7 +10,7 @@ const rootConfig = {
 
 const dbName = "biblioteca";
 
-const estruturaSQL = fs.readFileSync("./database/estrutura.sql", "utf8");
+const estruturaSQL = readFileSync("./database/estrutura.sql", "utf8");
 
 async function runMigrations() {
   const client = new Client(rootConfig);

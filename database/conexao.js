@@ -1,5 +1,5 @@
-const { Pool } = require("pg");
-//TODO: CASO QUEIRAM ESSES PARAMETROS DE POOL DEVERIAM SER VARIAAVEIS DE AMVBIENTE
+import { Pool } from "pg";
+
 const pool = new Pool({
   user: "postgres",
   host: "localhost",
@@ -8,4 +8,5 @@ const pool = new Pool({
   port: 5432,
 });
 
-module.exports = pool;
+export const query = (text, params) => pool.query(text, params);
+export const end = () => pool.end();

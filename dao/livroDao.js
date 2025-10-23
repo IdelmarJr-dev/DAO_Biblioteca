@@ -1,16 +1,16 @@
-const pool = require("../database/conexao");
-const Livro = require("../models/livro");
-const emprestimoDao = require("./emprestimoDao");
+import { query as _query } from "../database/conexao";
+import Livro from "../models/livro";
+import { calcularMulta } from "./emprestimoDao";
 class LivroDao {
   static async inserir(livro) {
     const query =
       "INSERT INTO livros (titulo, autor, ano, disponivel) VALUES ($1, $2, $3, $4) RETURNING id";
     const values = [livro.titulo, livro.autor, livro.ano, livro.disponivel];
-    const result = await pool.query(query, values);
+    const result = await _query(query, values);
     return result.rows[0].id;
   }
   static async listar() {
-    const result = await pool.query("SELECT * FROM livros");
+    const result = await _query("SELECT * FROM livros");
     return result.rows.map(
       (row) =>
         new Livro(
@@ -23,15 +23,13 @@ class LivroDao {
     );
   }
   static async alugar(id) {
-    await pool.query("UPDATE livros SET disponivel = FALSE WHERE id = $1", [
-      id,
-    ]);
+    await _query("UPDATE livros SET disponivel = FALSE WHERE id = $1", [id]);
   }
   static async devolver(id) {
-    await pool.query("UPDATE livros SET disponivel = TRUE WHERE id = $1", [id]);
+    await _query("UPDATE livros SET disponivel = TRUE WHERE id = $1", [id]);
   }
   static async verificarMulta(id) {
-    return await emprestimoDao.calcularMulta(id);
+    return await calcularMulta(id);
   }
 }
-module.exports = LivroDao;
+export default LivroDao;

@@ -1,18 +1,22 @@
 require("dotenv").config();
-const express = require("express");
-const bodyParser = require("body-parser");
-const session = require("express-session");
+import express from "express";
+import { json } from "body-parser";
+import session from "express-session";
 
-const livro = require("./models/livro");
-const usuario = require("./models/usuario");
-const livroDao = require("./dao/livroDao");
-const usuarioDao = require("./dao/usuarioDao");
-const emprestimoDao = require("./dao/emprestimoDao");
-const reservaDao = require("./dao/reservaDao");
-const Reserva = require("./models/reserva");
+import livro from "./models/livro";
+import usuario from "./models/usuario";
+import { listar, inserir } from "./dao/livroDao";
+import { registrar, autenticar, buscarPorId } from "./dao/usuarioDao";
+import {
+  registrarEmprestimo,
+  registrarDevolucao,
+  listarPorUsuario,
+} from "./dao/emprestimoDao";
+import { listarTodos, criar, atender } from "./dao/reservaDao";
+import Reserva from "./models/reserva";
 
 const app = express();
-app.use(bodyParser.json());
+app.use(json());
 app.use(express.static("public"));
 app.use(
   session({
@@ -28,7 +32,7 @@ app.listen(process.env.PORT || 3000, "0.0.0.0", () => {
 
 // Rota protegida para usuários logados
 app.get("/livros", async (req, res) => {
-  const livros = await livroDao.listar();
+  const livros = await listar();
   res.json(livros);
 });
 
@@ -36,7 +40,7 @@ app.get("/livros", async (req, res) => {
 app.post("/livros", async (req, res) => {
   const { titulo, autor, ano } = req.body;
   const livros = new livro(null, titulo, autor, ano);
-  const id = await livroDao.inserir(livros);
+  const id = await inserir(livros);
   res.json({ id });
 });
 
@@ -47,13 +51,13 @@ app.post("/registrar", async (req, res) => {
     req.body.email,
     req.body.senha
   );
-  const id = await usuarioDao.registrar(usuarios);
+  const id = await registrar(usuarios);
   req.session.usuarioId = id;
   res.sendStatus(201);
 });
 
 app.post("/login", async (req, res) => {
-  const usuario = await usuarioDao.autenticar(req.body.email, req.body.senha);
+  const usuario = await autenticar(req.body.email, req.body.senha);
   if (usuario) {
     req.session.usuarioId = usuario.id;
     res.sendStatus(200);
@@ -70,7 +74,7 @@ app.get("/logout", (req, res) => {
 //Listar todas as reservas (admin)
 app.get("/reservas", async (req, res) => {
   try {
-    const reservas = await reservaDao.listarTodos();
+    const reservas = await listarTodos();
     res.json(reservas);
   } catch (err) {
     res.status(500).json({ erro: "Erro ao listar reservas" });
@@ -88,7 +92,7 @@ app.post("/reservas", async (req, res) => {
       new Date(),
       false
     );
-    const id = await reservaDao.criar(reserva);
+    const id = await criar(reserva);
     res.json({ id });
   } catch (err) {
     res.status(500).json({ erro: "Erro ao criar reserva" });
@@ -99,7 +103,7 @@ app.post("/reservas", async (req, res) => {
 app.put("/reservas/:id/atender", async (req, res) => {
   try {
     const { id } = req.params;
-    await reservaDao.atender(id);
+    await atender(id);
     res.json({ sucesso: true });
   } catch (err) {
     res.status(500).json({ erro: "Erro ao atender reserva" });
@@ -108,38 +112,38 @@ app.put("/reservas/:id/atender", async (req, res) => {
 
 app.post("/livros", async (req, res) => {
   const livros = new livro(null, req.body.titulo, req.body.autor, req.body.ano);
-  const id = await livroDao.inserir(livros);
+  const id = await inserir(livros);
   res.status(201).send({ id });
 });
 
 app.get("/livros", async (req, res) => {
-  const livros = await livroDao.listar();
+  const livros = await listar();
   res.send(livros);
 });
 
 app.put("/livros/:id/alugar", async (req, res) => {
   if (!req.session.usuarioId) return res.status(401).send("Não autenticado");
-  await emprestimoDao.registrarEmprestimo(req.params.id, req.session.usuarioId);
+  await registrarEmprestimo(req.params.id, req.session.usuarioId);
   res.sendStatus(200);
 });
 
 app.put("/livros/:id/devolver", async (req, res) => {
-  await emprestimoDao.registrarDevolucao(req.params.id);
+  await registrarDevolucao(req.params.id);
   res.sendStatus(200);
 });
 
 app.get("/historico", async (req, res) => {
   if (!req.session.usuarioId) return res.status(401).send("Não autenticado");
-  const historico = await emprestimoDao.listarPorUsuario(req.session.usuarioId);
+  const historico = await listarPorUsuario(req.session.usuarioId);
   res.json(historico);
 });
 
 app.get("/admin/reservas", async (req, res) => {
   if (!req.session.usuarioId) return res.status(401).send("Não autenticado");
-  const usuario = await usuarioDao.buscarPorId(req.session.usuarioId);
+  const usuario = await buscarPorId(req.session.usuarioId);
   if (!usuario.is_admin) return res.status(403).send("Acesso negado");
 
-  const reservas = await reservaDao.listarTodos();
+  const reservas = await listarTodos();
   res.json(reservas);
 });
 

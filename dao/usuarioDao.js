@@ -1,22 +1,21 @@
-const pool = require("../database/conexao");
-const usuario = require("../models/usuario");
-const bcrypt = require("bcrypt");
+import { query } from "../database/conexao";
+import usuario from "../models/usuario";
+import { hash as _hash, compare } from "bcrypt";
 
 class usuarioDao {
   static async registrar(usuario) {
     if (!usuario.nome || !usuario.email || !usuario.senha) {
       throw new Error("Dados incompletos para registro de usuário");
     }
-    const existe = await pool.query(
-      `SELECT id FROM usuarios WHERE email = $1`,
-      [usuario.email]
-    );
+    const existe = await query(`SELECT id FROM usuarios WHERE email = $1`, [
+      usuario.email,
+    ]);
     if (existe.rows.length > 0) {
       throw new Error("E-mail já cadastrado");
     }
-    const hash = await bcrypt.hash(usuario.senha, 10);
+    const hash = await _hash(usuario.senha, 10);
 
-    const res = await pool.query(
+    const res = await query(
       `INSERT INTO usuarios (nome, email, senha, is_admin) VALUES ($1, $2, $3, $4) RETURNING id`,
       [usuario.nome, usuario.email, hash, usuario.is_admin || false]
     );
@@ -26,13 +25,11 @@ class usuarioDao {
   }
 
   static async autenticar(email, senha) {
-    const res = await pool.query(`SELECT * FROM usuarios WHERE email = $1`, [
-      email,
-    ]);
+    const res = await query(`SELECT * FROM usuarios WHERE email = $1`, [email]);
     if (res.rows.length === 0) return null;
 
     const usuario = res.rows[0];
-    const valido = await bcrypt.compare(senha, usuario.senha);
+    const valido = await compare(senha, usuario.senha);
 
     return valido
       ? {
@@ -46,11 +43,11 @@ class usuarioDao {
   }
 
   static async buscarPorId(id) {
-    const res = await pool.query(`SELECT * FROM usuarios WHERE id = $1`, [id]);
+    const res = await query(`SELECT * FROM usuarios WHERE id = $1`, [id]);
     if (res.rows.length === 0) return null;
     const u = res.rows[0];
     return new usuario(u.id, u.nome, u.email, u.senha, u.is_admin);
   }
 }
 
-module.exports = usuarioDao;
+export default usuarioDao;

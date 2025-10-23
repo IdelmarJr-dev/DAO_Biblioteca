@@ -1,29 +1,29 @@
-const pool = require("../database/conexao");
-const emprestimo = require("../models/emprestimo");
+import { query } from "../database/conexao";
+import emprestimo from "../models/emprestimo";
 
 class emprestimoDao {
   static async registrarEmprestimo(livro_id, usuario_id) {
     const hoje = new Date().toISOString().split("T")[0];
-    await pool.query(
+    await query(
       "INSERT emprestimos (livro_id, usuario_id, data_emprestimo) VALUES ($1, $2, $3)",
       [livro_id, usuario_id, hoje]
     );
-    await pool.query("UPDATE livros SET disponivel = FALSE WHERE id = $1", [
+    await query("UPDATE livros SET disponivel = FALSE WHERE id = $1", [
       livro_id,
     ]);
   }
   static async registrarDevolucao(livro_id) {
     const hoje = new Date().toISOString().split("T")[0];
-    await pool.query(
+    await query(
       "UPDATE emprestimos SET data_devolucao = $1 WHERE livro_id = $2 AND data_devolucao IS NULL",
       [hoje, livro_id]
     );
-    await pool.query("UPDATE livros SET disponivel = TRUE WHERE id = $1", [
+    await query("UPDATE livros SET disponivel = TRUE WHERE id = $1", [
       livro_id,
     ]);
   }
   static async listarPorUsuario(usuario_id) {
-    const res = await pool.query(
+    const res = await query(
       `SELECT * FROM emprestimos WHERE usuario_id = $1 ORDER BY data_emprestimo DESC`,
       [usuario_id]
     );
@@ -40,7 +40,7 @@ class emprestimoDao {
   }
 
   static async calcularMulta(livro_id) {
-    const res = await pool.query(
+    const res = await query(
       `SELECT data_emprestimo FROM emprestimos WHERE livro_id = $1 AND data_devolucao IS NULL`,
       [livro_id]
     );
@@ -55,4 +55,4 @@ class emprestimoDao {
     return dias > limite ? (dias - limite) * multaPorDia : 0;
   }
 }
-module.exports = emprestimoDao;
+export default emprestimoDao;

@@ -8,4 +8,4 @@ class Reserva {
   }
 }
 
-module.exports = Reserva;
+export default Reserva;

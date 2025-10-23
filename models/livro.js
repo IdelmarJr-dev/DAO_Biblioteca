@@ -10,4 +10,4 @@ class livro {
   }
 }
 
-module.exports = livro;
+export default livro;
