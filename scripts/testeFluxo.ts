@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { registrar } from "../dao/usuarioDao";
 import { inserir } from "../dao/livroDao";
 import {
@@ -6,19 +7,19 @@ import {
   registrarDevolucao,
 } from "../dao/emprestimoDao";
 import { query, end } from "../database/conexao";
-import usuario from "../models/usuario";
-import livro from "../models/livro";
+import Usuario from "../models/usuario";
+import Livro from "../models/livro";
 
 (async () => {
   try {
     console.log("Registrando usuários...");
-    const admin = new usuario(
+    const admin = new Usuario(
       null,
       "Bibliotecário",
       "admin@bib.com",
       "admin123"
     );
-    const leitor = new usuario(
+    const leitor = new Usuario(
       null,
       "Idelmar Junior",
       "idelmar@bib.com",
@@ -36,17 +37,17 @@ import livro from "../models/livro";
         "idelmar@bib.com",
         "senha456"
       );
-      const id2 = await UsuarioDAO.registrar(duplicado);
+      const id2 = await registrar(duplicado);
       console.log(
         `⚠️ Usuário duplicado registrado com ID ${id2} (isso não deveria acontecer!)`
       );
-    } catch (err) {
+    } catch (err: any) {
       console.error(`Erro esperado: ${err.message}`);
     }
 
     console.log("\nCadastrando livros...");
-    const livro1 = new livro(null, "1984", "George Orwell", 1949);
-    const livro2 = new livro(
+    const livro1 = new Livro(null, "1984", "George Orwell", 1949);
+    const livro2 = new Livro(
       null,
       "A Revolução dos Bichos",
       "George Orwell",

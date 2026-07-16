@@ -1,19 +1,21 @@
+import "dotenv/config";
 import { Client } from "pg";
 import { readFileSync } from "fs";
 
-const rootConfig = {
-  user: "postgres",
-  host: "localhost",
-  password: "@Idel140211",
-  port: 5432,
-};
+const dbUrl = process.env.DB_URL;
+if (!dbUrl) {
+  throw new Error("DB_URL não definida no .env");
+}
 
-const dbName = "biblioteca";
+const dbName = new URL(dbUrl).pathname.replace(/^\//, "");
+
+const rootUrl = new URL(dbUrl);
+rootUrl.pathname = "/postgres";
 
 const estruturaSQL = readFileSync("./database/estrutura.sql", "utf8");
 
 async function runMigrations() {
-  const client = new Client(rootConfig);
+  const client = new Client({ connectionString: rootUrl.toString() });
 
   try {
     await client.connect();
@@ -33,7 +35,7 @@ async function runMigrations() {
 
     await client.end();
 
-    const dbClient = new Client({ ...rootConfig, database: dbName });
+    const dbClient = new Client({ connectionString: dbUrl });
     await dbClient.connect();
 
     console.log("Rodando migrações (criando tabelas se não existirem)...");

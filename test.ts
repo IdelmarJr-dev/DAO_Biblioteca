@@ -1,5 +1,5 @@
-// test.js
-import { query, end } from "./database/conexao.js";
+import "dotenv/config";
+import { query, end } from "./database/conexao";
 
 async function testarConexao() {
   try {

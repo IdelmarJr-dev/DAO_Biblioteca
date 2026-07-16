@@ -2,22 +2,22 @@
 
 ## 🎯 Sobre o Projeto
 
-Este é um sistema web desenvolvido com **Node.js** e **PostgreSQL** para gerenciar biblioteca. O projeto permite o controle completo de usuários, livros, empréstimos, devoluções, multas por atraso e reservas. Também inclui um painel administrativo para bibliotecários.
+Este é um sistema web desenvolvido com **Node.js**, **TypeScript** e **PostgreSQL** para gerenciar biblioteca. O projeto permite o controle completo de usuários, livros, empréstimos, devoluções, multas por atraso e reservas. Também inclui um painel administrativo para bibliotecários.
 
 ## 📦 Estrutura do Projeto
 
 | Pasta / Arquivo         | Descrição                                                  |
 |--------------------------|-------------------------------------------------------------|
-| `app.js`                 | Arquivo principal que inicializa o servidor Express         |
-| `database/conexao.js`    | Configuração da conexão com o banco de dados PostgreSQL     |
+| `app.ts`                 | Arquivo principal que inicializa o servidor Express         |
+| `database/conexao.ts`    | Configuração da conexão com o banco de dados PostgreSQL     |
 | `database/estrutura.sql` | Script SQL para criação das tabelas do sistema              |
-| `dao/usuarioDao.js`      | Acesso e manipulação de dados dos usuários                  |
-| `dao/livroDao.js`        | Acesso e manipulação de dados dos livros                    |
-| `dao/emprestimoDao.js`   | Lógica de empréstimos, devoluções e cálculo de multas       |
-| `models/usuario.js`      | Modelo de dados do usuário                                  |
-| `models/livro.js`        | Modelo de dados do livro                                    |
-| `models/emprestimo.js`   | Modelo de dados do empréstimo                               |
-| `scripts/testeFluxo.js`  | Script para testar o fluxo completo do sistema              |
+| `dao/usuarioDao.ts`      | Acesso e manipulação de dados dos usuários                  |
+| `dao/livroDao.ts`        | Acesso e manipulação de dados dos livros                    |
+| `dao/emprestimoDao.ts`   | Lógica de empréstimos, devoluções e cálculo de multas       |
+| `models/usuario.ts`      | Modelo de dados do usuário                                  |
+| `models/livro.ts`        | Modelo de dados do livro                                    |
+| `models/emprestimo.ts`   | Modelo de dados do empréstimo                               |
+| `scripts/testeFluxo.ts`  | Script para testar o fluxo completo do sistema              |
 | `scripts/importarSeed.js`| Script para importar dados iniciais (opcional)              |
 | `seed.json`              | Arquivo com dados de exemplo para popular o banco           |
 | `README.md`              | Documentação do projeto                                     |
@@ -27,6 +27,7 @@ Este é um sistema web desenvolvido com **Node.js** e **PostgreSQL** para gerenc
 | Tecnologia       | Finalidade                                      |
 |------------------|-------------------------------------------------|
 | Node.js          | Backend e lógica de aplicação                   |
+| TypeScript       | Tipagem estática sobre o Node.js                |
 | Express          | Framework para rotas e servidor HTTP            |
 | PostgreSQL       | Banco de dados relacional                       |
 | bcrypt           | Criptografia de senhas                          |
